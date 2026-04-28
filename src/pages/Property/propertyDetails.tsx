@@ -43,6 +43,67 @@ const amenityIcons: Record<string, JSX.Element> = {
   Furnished: <Sofa size={16} />,
 };
 
+
+const PropertyDetailsSkeleton = () => {
+  return (
+    <div className="p-6 max-w-5xl mx-auto animate-pulse">
+
+      {/* BACK BUTTON */}
+      <div className="h-5 w-24 bg-gray-200 rounded mb-4" />
+
+      {/* IMAGE GRID */}
+      <div className="grid grid-cols-2 gap-2 rounded-xl overflow-hidden">
+        <div className="h-80 col-span-2 bg-gray-200" />
+        <div className="h-40 bg-gray-200" />
+        <div className="h-40 bg-gray-200" />
+        <div className="h-40 bg-gray-200" />
+        <div className="h-40 bg-gray-200" />
+      </div>
+
+      {/* TITLE + PRICE */}
+      <div className="mt-6 flex justify-between">
+        <div className="space-y-2">
+          <div className="h-6 w-40 bg-gray-200 rounded" />
+          <div className="h-4 w-28 bg-gray-200 rounded" />
+        </div>
+
+        <div className="h-6 w-24 bg-gray-200 rounded" />
+      </div>
+
+      {/* DESCRIPTION */}
+      <div className="mt-4 space-y-2">
+        <div className="h-3 bg-gray-200 rounded w-full" />
+        <div className="h-3 bg-gray-200 rounded w-5/6" />
+        <div className="h-3 bg-gray-200 rounded w-4/6" />
+      </div>
+
+      {/* BED / BATH */}
+      <div className="mt-3 h-3 w-32 bg-gray-200 rounded" />
+
+      {/* AMENITIES */}
+      <div className="mt-5">
+        <div className="h-4 w-24 bg-gray-200 rounded mb-3" />
+
+        <div className="flex flex-wrap gap-2">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="h-6 w-20 bg-gray-200 rounded-full" />
+          ))}
+        </div>
+      </div>
+
+      {/* HOST CARD */}
+      <div className="mt-8 border rounded-xl p-4 bg-gray-100 space-y-2">
+        <div className="h-4 w-40 bg-gray-200 rounded" />
+        <div className="h-3 w-32 bg-gray-200 rounded" />
+        <div className="h-8 w-40 bg-gray-200 rounded mt-3" />
+      </div>
+
+    </div>
+  );
+};
+
+
+
 const PropertyDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -91,9 +152,38 @@ const [user, setUser] = useState<any>(null);
     window.open(url, "_blank");
   };
 
-  if (loading) return <p className="p-6">Loading...</p>;
-  if (!property) return <p className="p-6">Property not found</p>;
+if (loading) return <PropertyDetailsSkeleton />;
+ if (!property)
+  return (
+    <div className="min-h-[60vh] flex items-center justify-center p-6">
+      <div className="bg-white border rounded-2xl shadow-md p-8 text-center max-w-md w-full">
 
+        {/* ICON */}
+        <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-purple-100 text-purple-600 text-2xl">
+          🏠
+        </div>
+
+        {/* TITLE */}
+        <h2 className="text-xl font-semibold text-gray-800">
+          Property Not Found
+        </h2>
+
+        {/* DESCRIPTION */}
+        <p className="text-gray-500 text-sm mt-2">
+          The property you're looking for doesn’t exist or may have been removed.
+        </p>
+
+        {/* ACTION BUTTON */}
+        <button
+          onClick={() => navigate("/")}
+          className="mt-5 bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg text-sm font-semibold transition"
+        >
+          Back to Home
+        </button>
+
+      </div>
+    </div>
+  );
   return (
     <div className="p-6 max-w-5xl mx-auto">
       {/* BACK BUTTON */}
