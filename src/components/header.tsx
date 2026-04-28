@@ -1,49 +1,66 @@
-import { useState } from "react";
+// src/components/Header.tsx
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
-import logo from '../assets/LOGO-removebg-preview.png'
+import { UserCircle, LogOut, LogIn, UserPlus } from "lucide-react";
+import logo from '../assets/icons/logo.png'
+type HeaderProps = {
+  user: any; // replace with your user type
+  onLogout: () => void;
+};
 
-const Header = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
-
+const Header = ({ user, onLogout }: HeaderProps) => {
   return (
-    <header className="flex items-center  justify-between p-4 bg-white border-b sticky top-0 z-10">
-      {/* Hamburger Icon */}
-      <button
-        onClick={() => setMenuOpen(!menuOpen)}
-        className="md:hidden text-gray-800"
-      >
-        {menuOpen ? <X size={28} /> : <Menu size={28} />}
-      </button>
+    <header className="w-full bg-white shadow-sm px-6 py-4 flex items-center justify-between">
+      
+      {/* Logo */}
+      <Link to="/" className="text-xl font-semibold text-purple-600">
+       <img src={logo} alt="" width={100}/>
+      </Link>
 
-      {/* Full-screen Menu */}
-      {menuOpen && (
-        <div className="fixed inset-0  bg-white flex flex-col items-center justify-center gap-6 text-lg font-semibold z-50">
-          <button
-            onClick={() => setMenuOpen(false)}
-            className="absolute top-4 right-4"
-          >
-            <X size={32} />
-          </button>
-          <Link to="/" className="hover:text-purple-600" onClick={() => setMenuOpen(false)}>Home</Link>
-          <Link to="/about" className="hover:text-purple-600" onClick={() => setMenuOpen(false)}>About Us</Link>
-          <Link to="/winners" className="hover:text-purple-600" onClick={() => setMenuOpen(false)}>Winners List</Link>
-          <Link to="/prize-claim" className="hover:text-purple-600" onClick={() => setMenuOpen(false)}>Prize Claim</Link>
-          <Link to="/contact" className="hover:text-purple-600" onClick={() => setMenuOpen(false)}>Contact Us</Link>
-        </div>
-      )}
+      {/* Right Section */}
+      <div className="flex items-center gap-4">
+        {!user ? (
+        
+<>
+  {/* LOGIN */}
+  <Link
+    to="/login"
+    className="flex text-[10px] items-center gap-2 px-2 py-2 rounded-xl text-gray-700 hover:text-purple-600 hover:bg-purple-50 transition font-medium"
+  >
+    <LogIn size={18} />
+    Login
+  </Link>
 
-      {/* Desktop Navigation */}
-      <nav className="hidden md:flex gap-6 text-gray-800 font-medium">
-        <Link to="/" className="hover:text-purple-600">Home</Link>
-        <Link to="/about" className="hover:text-purple-600">About Us</Link>
-        <Link to="/winners" className="hover:text-purple-600">Winners List</Link>
-        <Link to="/prize-claim" className="hover:text-purple-600">Prize Claim</Link>
-        <Link to="/contact" className="hover:text-purple-600">Contact Us</Link>
-      </nav>
+  {/* SIGN UP */}
+  <Link
+    to="/signup"
+    className="flex text-[10px] items-center gap-2 px-2 py-2 rounded bg-purple-600 text-white hover:bg-purple-700 transition font-medium shadow-sm hover:shadow-md"
+  >
+    <UserPlus size={18} />
+    Sign Up
+  </Link>
+</>
+        ) : (
+          <div className="flex items-center gap-3">
+            
+            {/* User Icon */}
+            <div className="flex items-center gap-2 cursor-pointer">
+              <UserCircle className="w-7 h-7 text-purple-600" />
+              <span className="text-sm text-gray-700">
+                {user?.name || "User"}
+              </span>
+            </div>
 
-      {/* Logo on the right */}
-      <div className="text-xl font-bold text-purple-700"><img src={logo} width={100} /></div>
+            {/* Logout */}
+            <button
+              onClick={onLogout}
+              className="flex items-center gap-1 text-sm text-red-500 hover:text-red-600"
+            >
+              <LogOut size={16} />
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
     </header>
   );
 };

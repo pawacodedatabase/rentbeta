@@ -12,3 +12,7 @@
 .custom-spin {
   animation: custom-spin 1s linear infinite;
 }
+
+body {
+  font-family: "Inter", sans-serif;
+}

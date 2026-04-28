@@ -1,36 +1,76 @@
-import React from "react";
-import { HashRouter as Router, Routes, Route, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 
 import "animate.css";
+import Signup from "./pages/HomePage/signup";
+import Login from "./pages/HomePage/login";
+import Dashboard from "./pages/dashboards/dashboard";
+import CreateListing from "./pages/dashboards/Landlord/createListing";
+import LandlordOnlyRoute from "./pages/dashboards/Landlord/landlordOnlyRoutes";
+import HomePage from "./pages/HomePage/homePage";
+import PropertyDetails from "./pages/Property/propertyDetails";
+import PropertiesPage from "./pages/Property/property";
 import Header from "./components/header";
-import Home from "./pages/Home";
-import Footer from "./components/footer";
-import AboutUs from "./pages/about";
-import ClaimWinnings from "./pages/claim";
-import ContactUs from "./components/contact";
-import Winners from "./pages/winners";
-import ManageWinners from "./pages/manage";
 
+import { supabase } from "./superbase"; // make sure path is correct
+import Footer from "./pages/footer";
 
 const App: React.FC = () => {
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    // get current session
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      setUser(data.session?.user || null);
+    };
+
+    getSession();
+
+    // listen for auth changes
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user || null);
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
+
   return (
     <Router>
       <div className="font-sans">
-        <Header/>
+        
+        {/* ✅ Header now inside Router */}
+        <Header user={user} onLogout={handleLogout} />
+
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="about" element={<AboutUs />} />
-          <Route path="prize-claim" element={<ClaimWinnings />} />
-          <Route path="contact" element={<ContactUs />} />
-          <Route path="winners" element={<Winners />} />
-          <Route path="admin" element={<ManageWinners />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/property/:id" element={<PropertyDetails />} />
+          <Route path="/property" element={<PropertiesPage />} />
+
+          <Route
+            path="/create-listing"
+            element={
+              <LandlordOnlyRoute>
+                <CreateListing />
+              </LandlordOnlyRoute>
+            }
+            
+           
+          />
         </Routes>
-        <Footer/>
-        <Link to="/prize-claim"
-          className="fixed bottom-4 right-4 bg-black text-white px-6 py-3  shadow-lg text-lg font-semibold  hover:bg-blue-800 "
-        >
-          Claim Prize
-        </Link>
+
+         <Footer/>
       </div>
     </Router>
   );
