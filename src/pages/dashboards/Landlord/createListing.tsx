@@ -40,6 +40,143 @@ const CreateListing = () => {
   "Gym",
 ];
 
+const nigeriaLocations = [
+  // LAGOS
+  "Lagos, Lagos 100001",
+  "Ikeja, Lagos 100271",
+  "Lekki, Lagos 105102",
+  "Victoria Island, Lagos 101241",
+  "Ikoyi, Lagos 101233",
+  "Yaba, Lagos 101212",
+  "Surulere, Lagos 101283",
+  "Ajah, Lagos 105101",
+  "Badagry, Lagos 103101",
+  "Epe, Lagos 106101",
+
+  // FCT ABUJA
+  "Abuja, FCT 900001",
+  "Wuse, Abuja, FCT 900281",
+  "Maitama, Abuja, FCT 900271",
+  "Gwarinpa, Abuja, FCT 900108",
+  "Asokoro, Abuja, FCT 900231",
+  "Lugbe, Abuja, FCT 900107",
+
+  // OYO
+  "Ibadan, Oyo 200001",
+  "Bodija, Ibadan, Oyo 200212",
+  "Ogbomosho, Oyo 210001",
+  "Oyo Town, Oyo 211001",
+
+  // RIVERS
+  "Port Harcourt, Rivers 500001",
+  "Obio-Akpor, Rivers 500102",
+
+  // KANO
+  "Kano, Kano 700001",
+
+  // KADUNA
+  "Kaduna, Kaduna 800001",
+  "Zaria, Kaduna 810001",
+
+  // ENUGU
+  "Enugu, Enugu 400001",
+  "Nsukka, Enugu 410001",
+
+  // IMO
+  "Owerri, Imo 460001",
+  "Orlu, Imo 470001",
+
+  // EDO
+  "Benin City, Edo 300001",
+
+  // DELTA
+  "Asaba, Delta 320001",
+  "Warri, Delta 332101",
+
+  // AKWA IBOM
+  "Uyo, Akwa Ibom 520001",
+  "Eket, Akwa Ibom 524101",
+
+  // CROSS RIVER
+  "Calabar, Cross River 540001",
+
+  // OGUN
+  "Abeokuta, Ogun 110001",
+  "Ijebu Ode, Ogun 120101",
+
+  // KWARA
+  "Ilorin, Kwara 240001",
+
+  // ONDO
+  "Akure, Ondo 340001",
+
+  // OSUN
+  "Osogbo, Osun 230001",
+  "Ife, Osun 220101",
+
+  // EKITI
+  "Ado Ekiti, Ekiti 360001",
+
+  // PLATEAU
+  "Jos, Plateau 930001",
+
+  // NIGER
+  "Minna, Niger 920001",
+
+  // NASARAWA
+  "Lafia, Nasarawa 962101",
+
+  // KOGI
+  "Lokoja, Kogi 260001",
+
+  // ANAMBRA
+  "Awka, Anambra 420001",
+  "Onitsha, Anambra 434101",
+  "Nnewi, Anambra 435101",
+
+  // EBONYI
+  "Abakaliki, Ebonyi 840001",
+
+  // ABIA
+  "Umuahia, Abia 440001",
+  "Aba, Abia 450001",
+
+  // BAYELSA
+  "Yenagoa, Bayelsa 561101",
+
+  // ADAMAWA
+  "Yola, Adamawa 640001",
+
+  // TARABA
+  "Jalingo, Taraba 660001",
+
+  // GOMBE
+  "Gombe, Gombe 760001",
+
+  // BAUCHI
+  "Bauchi, Bauchi 740001",
+
+  // BORNO
+  "Maiduguri, Borno 600001",
+
+  // YOBE
+  "Damaturu, Yobe 620001",
+
+  // JIGAWA
+  "Dutse, Jigawa 720001",
+
+  // KATSINA
+  "Katsina, Katsina 820001",
+
+  // KEBBI
+  "Birnin Kebbi, Kebbi 860001",
+
+  // SOKOTO
+  "Sokoto, Sokoto 840001",
+
+  // ZAMFARA
+  "Gusau, Zamfara 860001",
+];
   const [images, setImages] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -48,8 +185,23 @@ const [amenities, setAmenities] = useState<string[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 const [listingType, setListingType] = useState<string>("");
+const [suggestions, setSuggestions] = useState<string[]>([]);
 
 
+const handleLocationChange = (value: string) => {
+  setForm({ ...form, location: value });
+
+  if (!value) {
+    setSuggestions([]);
+    return;
+  }
+
+  const filtered = nigeriaLocations.filter((loc) =>
+    loc.toLowerCase().includes(value.toLowerCase())
+  );
+
+  setSuggestions(filtered);
+};
   const CLOUD_NAME = "dx90y9zdx";
   const UPLOAD_PRESET = "adorethebrand";
 
@@ -228,11 +380,11 @@ const handleEdit = (p: Property) => {
   };
 
   return (
-    <div className="p-6 grid grid-cols-2 gap-8">
+    <div className="p-8 flex  flex-col  gap-8">
 
       {/* ---------------- FORM ---------------- */}
-      <div>
-        <h1 className="text-2xl font-bold mb-4">
+      <div className="mb-8  border-b">
+        <h1 className="text-2xl font-bold mb-6">
           {editingId ? "Edit Listing" : "Create Listing"}
         </h1>
 
@@ -276,12 +428,32 @@ const handleEdit = (p: Property) => {
             }
           />
 
-          <input
-            className="w-full border p-2"
-            placeholder="Location"
-            value={form.location}
-            onChange={(e) => setForm({ ...form, location: e.target.value })}
-          />
+       <div className="relative w-full">
+  <input
+    className="w-full border p-3 rounded-lg focus:border-purple-500 outline-none"
+    placeholder="Enter location"
+    value={form.location}
+    onChange={(e) => handleLocationChange(e.target.value)}
+  />
+
+  {/* SUGGESTIONS */}
+  {suggestions.length > 0 && (
+    <div className="absolute top-full left-0 w-full bg-white border rounded-lg shadow-lg mt-1 z-50 max-h-48 overflow-y-auto">
+      {suggestions.map((loc, i) => (
+        <div
+          key={i}
+          onClick={() => {
+            setForm({ ...form, location: loc });
+            setSuggestions([]);
+          }}
+          className="px-4 py-2 hover:bg-purple-50 cursor-pointer text-sm"
+        >
+          {loc}
+        </div>
+      ))}
+    </div>
+  )}
+</div>
 
           <input
             className="w-full border p-2"
@@ -365,9 +537,10 @@ const handleEdit = (p: Property) => {
         </form>
       </div>
 
+<div> <hr /> <hr /> <hr /> <hr /></div>
       {/* ---------------- MY LISTINGS ---------------- */}
       <div>
-        <h2 className="text-xl font-bold mb-4">My Listings</h2>
+        <h2 className="text-xl font-bold mb-4 text-center mb-6">My Listings</h2>
 
         <div className="space-y-4">
           {listings.map((p) => (
