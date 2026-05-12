@@ -14,6 +14,7 @@ import Header from "./components/header";
 
 import { supabase } from "./superbase"; // make sure path is correct
 import Footer from "./pages/footer";
+import ScrollToTop from "./components/scroll";
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -46,6 +47,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <div className="font-sans">
+        <ScrollToTop/>
         
         {/* ✅ Header now inside Router */}
         <Header user={user} onLogout={handleLogout} />

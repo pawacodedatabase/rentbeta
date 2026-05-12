@@ -21,7 +21,7 @@ const listingTypeIcons: Record<string, JSX.Element> = {
 const LandlordDashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [myListings, setMyListings] = useState<Property[]>([]);
-  
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
@@ -30,29 +30,61 @@ const LandlordDashboard = () => {
   }, []);
 
   const fetchUserAndListings = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  setLoading(true);
 
-    if (!user) return;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    // GET PROFILE FROM USERS TABLE
-    const { data: profile } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", user.id)
-      .single();
+  if (!user) {
+    setLoading(false);
+    return;
+  }
 
-    setUser(profile);
+  // GET PROFILE FROM USERS TABLE
+  const { data: profile } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", user.id)
+    .single();
 
-    // GET LISTINGS
-    const { data } = await supabase
-      .from("properties")
-      .select("*")
-      .eq("user_id", user.id);
+  setUser(profile);
 
-    setMyListings(data || []);
-  };
+  // GET LISTINGS
+  const { data } = await supabase
+    .from("properties")
+    .select("*")
+    .eq("user_id", user.id);
+
+  setMyListings(data || []);
+
+  setLoading(false);
+};
+
+  // const fetchUserAndListings = async () => {
+  //   const {
+  //     data: { user },
+  //   } = await supabase.auth.getUser();
+
+  //   if (!user) return;
+
+  //   // GET PROFILE FROM USERS TABLE
+  //   const { data: profile } = await supabase
+  //     .from("users")
+  //     .select("*")
+  //     .eq("id", user.id)
+  //     .single();
+
+  //   setUser(profile);
+
+  //   // GET LISTINGS
+  //   const { data } = await supabase
+  //     .from("properties")
+  //     .select("*")
+  //     .eq("user_id", user.id);
+
+  //   setMyListings(data || []);
+  // };
 
   // ---------------- LOGOUT ----------------
   const handleLogout = async () => {
@@ -107,36 +139,59 @@ const LandlordDashboard = () => {
       </div>
 
       {/* ---------------- LISTINGS ---------------- */}
-      <div className="grid grid-cols-3 gap-4 mt-6">
-  {myListings.map((p) => (
-    <Link
-      to={`/property/${p.id}`}
-      key={p.id}
-      className="border rounded-xl overflow-hidden hover:shadow-lg transition"
-    >
-      {/* IMAGE CONTAINER */}
-      <div className="relative">
-        <img
-          src={p.images?.[0]}
-          className="h-32 w-full object-cover"
-        />
+   {/* ---------------- LISTINGS ---------------- */}
+<div className="grid grid-cols-3 gap-4 mt-6">
 
-        {/* 🔥 LISTING TYPE BADGE */}
-        {p.listing_type && (
-          <div className="absolute top-2 left-2 bg-white/90 backdrop-blur px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow">
-            {listingTypeIcons[p.listing_type] || null}
-            {p.listing_type}
+  {loading
+    ? Array.from({ length: 6 }).map((_, index) => (
+        <div
+          key={index}
+          className="border rounded-xl overflow-hidden"
+        >
+          {/* IMAGE SKELETON */}
+          <div className="relative animate-pulse">
+            <div className="h-32 w-full bg-gray-300"></div>
+
+            <div className="absolute top-2 left-2 h-6 w-20 bg-white rounded-full"></div>
           </div>
-        )}
-      </div>
 
-      {/* CONTENT */}
-      <div className="p-3">
-        <h2 className="font-bold">{p.title}</h2>
-        <p className="text-sm text-gray-500">{p.location}</p>
-      </div>
-    </Link>
-  ))}
+          {/* CONTENT SKELETON */}
+          <div className="p-3 animate-pulse">
+            <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+
+            <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+          </div>
+        </div>
+      ))
+    : myListings.map((p) => (
+        <Link
+          to={`/property/${p.id}`}
+          key={p.id}
+          className="border rounded-xl overflow-hidden hover:shadow-lg transition"
+        >
+          {/* IMAGE CONTAINER */}
+          <div className="relative">
+            <img
+              src={p.images?.[0]}
+              className="h-32 w-full object-cover"
+            />
+
+            {/* 🔥 LISTING TYPE BADGE */}
+            {p.listing_type && (
+              <div className="absolute top-2 left-2 bg-white/90 backdrop-blur px-2 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow">
+                {listingTypeIcons[p.listing_type] || null}
+                {p.listing_type}
+              </div>
+            )}
+          </div>
+
+          {/* CONTENT */}
+          <div className="p-3">
+            <h2 className="font-bold">{p.title}</h2>
+            <p className="text-sm text-gray-500">{p.location}</p>
+          </div>
+        </Link>
+      ))}
 </div>
 
     </div>

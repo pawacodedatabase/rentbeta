@@ -43,12 +43,16 @@ const Header = ({ user, onLogout }: HeaderProps) => {
           <div className="flex items-center gap-3">
             
             {/* User Icon */}
+              <Link
+    to="/dashboard"
+    className="flex text-[10px] items-center gap-2 px-2 py-2 rounded  text-white hover:bg-purple-200 transition font-medium shadow-sm hover:shadow-md"
+  >
             <div className="flex items-center gap-2 cursor-pointer">
               <UserCircle className="w-7 h-7 text-purple-600" />
               <span className="text-sm text-gray-700">
-                {user?.name || "User"}
+                {user?.full_name || "User"}
               </span>
-            </div>
+            </div></Link>
 
             {/* Logout */}
             <button

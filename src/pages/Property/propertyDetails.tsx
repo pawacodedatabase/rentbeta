@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { FaWhatsapp } from "react-icons/fa";
 import { supabase } from "../../superbase";
 import {
   Wifi,
@@ -11,6 +12,7 @@ import {
   Shield,
   Sofa,
   ArrowLeft,
+  Phone,
 } from "lucide-react";
 
 type Property = {
@@ -252,19 +254,34 @@ if (loading) return <PropertyDetailsSkeleton />;
 
         <p className="text-sm text-gray-600">{landlord?.email}</p>
 
-        <button
-          onClick={handleWhatsApp}
-          className="mt-3 bg-green-500 text-white px-4 py-2 rounded"
-        >
-          WhatsApp Landlord
-        </button>
+       <div className="flex items-center gap-3 mt-3">
+  
+  {/* WHATSAPP BUTTON */}
+  <button
+    onClick={handleWhatsApp}
+    className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition"
+  >
+    <FaWhatsapp  size={18} />
+    WhatsApp Landlord
+  </button>
+
+  {/* CALL BUTTON */}
+  <a
+    href={`tel:${user?.phone}`}
+    className="flex items-center gap-2 bg-black hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition"
+  >
+    <Phone size={18} />
+    Call Landlord
+  </a>
+
+</div>
       </div>
 
       {/* ACTIONS */}
-      <div className="mt-6 flex gap-3">
+      {/* <div className="mt-6 flex gap-3">
         <button className="border px-4 py-2 rounded">❤️ Save</button>
         <button className="border px-4 py-2 rounded">Share</button>
-      </div>
+      </div> */}
     </div>
   );
 };
