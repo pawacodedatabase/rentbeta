@@ -16,6 +16,8 @@ import { supabase } from "./superbase"; // make sure path is correct
 import Footer from "./pages/footer";
 import ScrollToTop from "./components/scroll";
 import ChatRoom from "./pages/chat/chat";
+import Conversations from "./pages/chat/conversation";
+import ChatFAB from "./pages/chat/chatFab";
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -49,6 +51,7 @@ const App: React.FC = () => {
     <Router>
       <div className="font-sans">
         <ScrollToTop/>
+        <ChatFAB/>
         
         {/* ✅ Header now inside Router */}
         <Header user={user} onLogout={handleLogout} />
@@ -60,7 +63,8 @@ const App: React.FC = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/property/:id" element={<PropertyDetails />} />
           <Route path="/property" element={<PropertiesPage />} />
-<Route path="/chat/:conversationId" element={<ChatRoom />} /><Route path="/chat/:conversationId" element={<ChatRoom />} />
+<Route path="/chat/:conversationId" element={<ChatRoom />} />
+<Route path="/chat" element={<Conversations />} />
           <Route
             path="/create-listing"
             element={
