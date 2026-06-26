@@ -23,9 +23,17 @@ export default function Conversations() {
         return;
       }
 
+      // Fetch conversations with property information
       const { data, error } = await supabase
         .from("conversations")
-        .select("*")
+        .select(`
+          *,
+          properties(
+            id,
+            title,
+            images
+          )
+        `)
         .or(`tenant_id.eq.${user.id},landlord_id.eq.${user.id}`)
         .order("last_message_at", {
           ascending: false,
@@ -46,12 +54,14 @@ export default function Conversations() {
             ? convo.tenant_id
             : convo.landlord_id;
 
+        // Fetch other user's profile
         const { data: profile } = await supabase
           .from("users")
           .select("full_name")
           .eq("id", otherUserId)
-          .maybeSingle(); // safer than .single()
+          .maybeSingle();
 
+        // Count unread messages
         const { count } = await supabase
           .from("messages")
           .select("*", {
@@ -65,6 +75,8 @@ export default function Conversations() {
         chats.push({
           ...convo,
           full_name: profile?.full_name || "Unknown User",
+          property_name: convo.properties?.title || "",
+          property_image: convo.properties?.images?.[0] || "",
           unread: count || 0,
         });
       }
@@ -99,8 +111,9 @@ export default function Conversations() {
           </h2>
 
           <p className="text-gray-500 mt-2 max-w-sm">
-            You haven't started any conversations yet. Once you message a
-            landlord or tenant, your chats will appear here.
+            You haven't started any conversations yet.
+            Once you message a landlord or tenant,
+            your chats will appear here.
           </p>
         </div>
       ) : (
@@ -110,6 +123,8 @@ export default function Conversations() {
               key={chat.id}
               id={chat.id}
               name={chat.full_name}
+              propertyName={chat.property_name}
+            //   propertyImage={chat.property_image}
               lastMessage={chat.last_message || "Start chatting..."}
               lastTime={chat.last_message_at}
               unread={chat.unread}

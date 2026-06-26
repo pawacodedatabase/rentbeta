@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";import { useNav
 import { supabase } from "../../superbase";
 import { ArrowLeft, Send } from "lucide-react";
 import ChatSkeleton from "./chatskeleton";
-
+import { MapPin, ArrowUpRight } from "lucide-react";
 
 type Message = {
   id: string;
@@ -18,6 +18,14 @@ type Conversation = {
   landlord_id: string;
   tenant_id: string;
   property_id: string;
+
+  properties: {
+    id: string;
+    title: string;
+    location: string;
+    price: number;
+    images: string[];
+  };
 };
 
 type User = {
@@ -30,7 +38,7 @@ export default function ChatRoom() {
   const navigate = useNavigate();
 
   const [messages, setMessages] = useState<Message[]>([]);
-  const [, setConversation] = useState<Conversation | null>(null);
+  const [conversation, setConversation] = useState<Conversation | null>(null);
   const [receiver, setReceiver] = useState<User | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [text, setText] = useState("");
@@ -56,12 +64,20 @@ useEffect(() => {
 
   setCurrentUser(user);
 
-  const { data: convo } = await supabase
-    .from("conversations")
-    .select("*")
-    .eq("id", conversationId)
-    .single();
-
+ const { data: convo } = await supabase
+  .from("conversations")
+  .select(`
+    *,
+    properties (
+      id,
+      title,
+      location,
+      price,
+      images
+    )
+  `)
+  .eq("id", conversationId)
+  .single();
   if (!convo) return;
 
   setConversation(convo);
@@ -169,7 +185,7 @@ useEffect(() => {
  if (loading) return <ChatSkeleton />;
 
   return (
-    <div className="h-screen flex flex-col bg-[#efeae2]">
+    <div className="h-screen flex flex-col bg-white">
 
       {/* HEADER */}
 
@@ -190,6 +206,53 @@ useEffect(() => {
         </div>
 
       </div>
+
+      {/* PROPERTY CARD */}
+{/* PROPERTY PREVIEW */}
+{conversation?.properties && (
+  <div className=" z-20 bg-white border-b">
+    <div className="flex items-center justify-between px-4 py-3">
+
+      <div className="flex items-center gap-3">
+
+        <img
+          src={conversation.properties.images?.[0]}
+          alt={conversation.properties.title}
+          className="w-16 h-16 rounded-xl object-cover"
+        />
+
+        <div>
+
+          <h2 className="font-semibold text-gray-900 text-sm">
+            {conversation.properties.title}
+          </h2>
+
+         <p className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+  <MapPin size={14} />
+  {conversation.properties.location}
+</p>
+
+          <p className="mt-1 font-semibold text-purple-600">
+            ₦{conversation.properties.price.toLocaleString()}
+          </p>
+
+        </div>
+
+      </div>
+
+     <button
+  onClick={() =>
+    navigate(`/property/${conversation.properties.id}`)
+  }
+  className="flex items-center gap-1 rounded-xl border border-purple-600 px-4 py-2 text-sm font-medium text-purple-600 hover:bg-purple-600 hover:text-white transition"
+>
+  View
+  <ArrowUpRight size={15} />
+</button>
+
+    </div>
+  </div>
+)}
 
       {/* MESSAGES */}
 

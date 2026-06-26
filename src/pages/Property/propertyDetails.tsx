@@ -144,7 +144,6 @@ const [, setUser] = useState<any>(null);
   };
 
 const handleMessageLandlord = async () => {
-  // Get logged in user
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -159,39 +158,46 @@ const handleMessageLandlord = async () => {
     return;
   }
 
-  // Check if conversation already exists
-  const { data: existingConversation } = await supabase
+  // Look for an existing conversation
+  const { data: existingConversation, error: findError } = await supabase
     .from("conversations")
     .select("id")
-    .eq("property_id", property?.id)
     .eq("tenant_id", user.id)
     .eq("landlord_id", property?.user_id)
+    .eq("property_id", property?.id)
+    .limit(1)
     .maybeSingle();
 
-  let conversationId = existingConversation?.id;
-
-  // If no conversation exists, create one
-  if (!conversationId) {
-    const { data: newConversation, error } = await supabase
-      .from("conversations")
-      .insert({
-        property_id: property?.id,
-        tenant_id: user.id,
-        landlord_id: property?.user_id,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.log(error);
-      return;
-    }
-
-    conversationId = newConversation.id;
+  if (findError) {
+    console.log(findError);
+    return;
   }
 
-  // Navigate to chat room
-  navigate(`/chat/${conversationId}`);
+  // If found, just open it
+  if (existingConversation) {
+    navigate(`/chat/${existingConversation.id}`);
+    return;
+  }
+
+  // Otherwise create a new conversation
+  const { data: newConversation, error: createError } = await supabase
+    .from("conversations")
+    .insert({
+      tenant_id: user.id,
+      landlord_id: property?.user_id,
+      property_id: property?.id,
+      last_message: "",
+      last_message_at: new Date().toISOString(),
+    })
+    .select("id")
+    .single();
+
+  if (createError) {
+    console.log(createError);
+    return;
+  }
+
+  navigate(`/chat/${newConversation.id}`);
 };
 
 if (loading) return <PropertyDetailsSkeleton />;
