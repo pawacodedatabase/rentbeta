@@ -13,6 +13,46 @@ export default function ChatFAB() {
     getUser();
   }, []);
 
+  useEffect(() => {
+  let cleanup: (() => void) | undefined;
+
+  // Get current user immediately
+  supabase.auth.getUser().then(({ data: { user } }) => {
+    if (user) {
+      setUser(user);
+      loadUnread(user.id);
+      cleanup = subscribe(user.id);
+    }
+  });
+
+  // Listen for login/logout
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange((_event, session) => {
+    if (session?.user) {
+      setUser(session.user);
+      loadUnread(session.user.id);
+
+      if (cleanup) cleanup();
+
+      cleanup = subscribe(session.user.id);
+    } else {
+      setUser(null);
+      setUnread(0);
+
+      if (cleanup) cleanup();
+    }
+  });
+
+  return () => {
+    subscription.unsubscribe();
+
+    if (cleanup) cleanup();
+  };
+}, []);
+
+
+
   async function getUser() {
     const {
       data: { user },
@@ -27,52 +67,70 @@ export default function ChatFAB() {
     subscribe(user.id);
   }
 
-  async function loadUnread(userId: string) {
-    const { data: conversations } = await supabase
-      .from("conversations")
-      .select("id")
-      .or(`tenant_id.eq.${userId},landlord_id.eq.${userId}`);
+ async function loadUnread(userId: string) {
+  const { data: conversations } = await supabase
+    .from("conversations")
+    .select("id")
+    .or(`tenant_id.eq.${userId},landlord_id.eq.${userId}`);
 
-    if (!conversations || conversations.length === 0) {
-      setUnread(0);
-      return;
-    }
-
-    const ids = conversations.map((c) => c.id);
-
-    const { count } = await supabase
-      .from("messages")
-      .select("*", {
-        count: "exact",
-        head: true,
-      })
-      .in("conversation_id", ids)
-      .eq("read", false)
-      .neq("sender_id", userId);
-
-    setUnread(count || 0);
+  if (!conversations?.length) {
+    setUnread(0);
+    return;
   }
 
-  function subscribe(userId: string) {
-    const channel = supabase
-      .channel("chat-fab")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "messages",
-        },
-        () => {
-          loadUnread(userId);
-        }
-      )
-      .subscribe();
+  const ids = conversations.map((c) => c.id);
 
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }
+  const { count } = await supabase
+    .from("messages")
+    .select("*", {
+      count: "exact",
+      head: true,
+    })
+    .in("conversation_id", ids)
+    .eq("read", false)
+    .neq("sender_id", userId);
+
+  setUnread(count ?? 0);
+}
+
+
+
+ function subscribe(userId: string) {
+  const channel = supabase
+    .channel(`fab-${userId}`)
+
+    // New message
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "messages",
+      },
+      () => {
+        loadUnread(userId);
+      }
+    )
+
+    // Read receipt
+    .on(
+      "postgres_changes",
+      {
+        event: "UPDATE",
+        schema: "public",
+        table: "messages",
+      },
+      () => {
+        loadUnread(userId);
+      }
+    )
+
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}
 
   if (!user) return null;
 

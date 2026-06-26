@@ -4,6 +4,7 @@ import { ArrowLeft, Send } from "lucide-react";
 import ChatSkeleton from "./chatskeleton";
 import { MapPin, ArrowUpRight } from "lucide-react";
 
+
 type Message = {
   id: string;
   conversation_id: string;
@@ -104,13 +105,17 @@ useEffect(() => {
   setMessages(msgs || []);
 
   // Mark messages from the other user as read
-  await supabase
-    .from("messages")
-    .update({ read: true })
-    .eq("conversation_id", conversationId)
-    .neq("sender_id", user.id);
+// Mark all messages from the other user as read
+await supabase
+  .from("messages")
+  .update({ read: true })
+  .eq("conversation_id", conversationId)
+  .neq("sender_id", user.id);
 
-  setLoading(false);
+// Refresh the unread badge immediately
+window.dispatchEvent(new Event("messages-read"));
+
+setLoading(false);
 }, [conversationId]);
 
 
@@ -120,29 +125,62 @@ useEffect(() => {
 
 
 const sendMessage = async () => {
-  if (!text.trim()) return;
+  if (!text.trim() || !currentUser) return;
 
-  const message = text;
+  const messageText = text;
 
+  // clear input immediately
   setText("");
 
-  const { error } = await supabase
+  // temporary message (shows instantly)
+  const tempMessage: Message = {
+    id: crypto.randomUUID(),
+    conversation_id: conversationId!,
+    sender_id: currentUser.id,
+    message: messageText,
+    created_at: new Date().toISOString(),
+    read: false,
+  };
+
+  // show instantly
+  setMessages((prev) => [...prev, tempMessage]);
+
+  bottomRef.current?.scrollIntoView({
+    behavior: "smooth",
+  });
+
+  const { data, error } = await supabase
     .from("messages")
     .insert({
       conversation_id: conversationId,
       sender_id: currentUser.id,
-      message,
-    });
+      message: messageText,
+    })
+    .select()
+    .single();
 
   if (error) {
     console.log(error);
+
+    // remove optimistic message if insert failed
+    setMessages((prev) =>
+      prev.filter((m) => m.id !== tempMessage.id)
+    );
+
     return;
   }
+
+  // replace temporary message with real one
+  setMessages((prev) =>
+    prev.map((m) =>
+      m.id === tempMessage.id ? data : m
+    )
+  );
 
   await supabase
     .from("conversations")
     .update({
-      last_message: message,
+      last_message: messageText,
       last_message_at: new Date().toISOString(),
     })
     .eq("id", conversationId);
@@ -153,27 +191,39 @@ useEffect(() => {
   if (!conversationId) return;
 
   const channel = supabase
-    .channel(`messages-${conversationId}`)
+    .channel(`chat-${conversationId}`)
     .on(
       "postgres_changes",
       {
-        event: "INSERT",
+        event: "*",
         schema: "public",
         table: "messages",
         filter: `conversation_id=eq.${conversationId}`,
       },
-      (payload) => {
-        const newMessage = payload.new as Message;
+    async (payload) => {
+  const newMessage = payload.new as Message;
 
-        setMessages((old) => {
-          // prevent duplicates
-          if (old.find((m) => m.id === newMessage.id)) return old;
+  setMessages((old) => {
+    if (old.some((m) => m.id === newMessage.id)) return old;
 
-          return [...old, newMessage];
-        });
-      }
+    return [...old, newMessage];
+  });
+
+  // If the message came from the other user,
+  // immediately mark it as read.
+  if (newMessage.sender_id !== currentUser?.id) {
+    await supabase
+      .from("messages")
+      .update({ read: true })
+      .eq("id", newMessage.id);
+  }
+}
+
+
     )
-    .subscribe();
+    .subscribe((status) => {
+      console.log("Realtime Status:", status);
+    });
 
   return () => {
     supabase.removeChannel(channel);
@@ -276,7 +326,7 @@ useEffect(() => {
 
                 ${
                   mine
-                    ? "bg-purple-600 text-white"
+                    ? "bg-gray-300 text-gray-700"
                     : "bg-white text-gray-800"
                 }
                 `}
@@ -284,16 +334,20 @@ useEffect(() => {
 
                 <p>{msg.message}</p>
 
-                <p className="text-[10px] mt-1 opacity-70 text-right">
+             <div className="flex justify-end items-center gap-1 mt-1 text-[10px] opacity-70">
+  <span>
+    {new Date(msg.created_at).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}
+  </span>
 
-                  {new Date(
-                    msg.created_at
-                  ).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-
-                </p>
+  {msg.sender_id === currentUser.id && (
+    <span>
+      {msg.read ? "read" : "delivered"}
+    </span>
+  )}
+</div>
 
               </div>
 
