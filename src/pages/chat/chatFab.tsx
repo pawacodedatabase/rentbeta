@@ -79,10 +79,10 @@ export default function ChatFAB() {
   return (
     <button
       onClick={() => navigate("/chat")}
-      className="fixed bottom-24 right-5 z-50"
+      className="fixed bottom-20 left-5 z-50"
     >
-      <div className="relative">
-        <div className="w-10 h-10 rounded-full bg-purple-600 shadow-xl flex items-center justify-center text-white hover:scale-105 transition">
+      <div className="relative"> 
+        <div className="w-10 h-10 rounded-full bg-black  hover:bg-purple-600 shadow-xl flex items-center justify-center text-white hover:scale-105 transition">
           <MessageCircle size={20} />
         </div>
 
