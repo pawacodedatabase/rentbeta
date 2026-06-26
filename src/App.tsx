@@ -15,6 +15,7 @@ import Header from "./components/header";
 import { supabase } from "./superbase"; // make sure path is correct
 import Footer from "./pages/footer";
 import ScrollToTop from "./components/scroll";
+import ChatRoom from "./pages/chat/chat";
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -59,7 +60,7 @@ const App: React.FC = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/property/:id" element={<PropertyDetails />} />
           <Route path="/property" element={<PropertiesPage />} />
-
+<Route path="/chat/:conversationId" element={<ChatRoom />} /><Route path="/chat/:conversationId" element={<ChatRoom />} />
           <Route
             path="/create-listing"
             element={

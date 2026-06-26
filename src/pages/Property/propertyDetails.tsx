@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { FaWhatsapp } from "react-icons/fa";
+import { MessageCircle } from "lucide-react";
 import { supabase } from "../../superbase";
 import {
   Wifi,
@@ -109,7 +109,7 @@ const PropertyDetailsSkeleton = () => {
 const PropertyDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-const [user, setUser] = useState<any>(null);
+const [, setUser] = useState<any>(null);
   const [property, setProperty] = useState<Property | null>(null);
   const [landlord, setLandlord] = useState<Landlord | null>(null);
   const [loading, setLoading] = useState(true);
@@ -143,16 +143,56 @@ const [user, setUser] = useState<any>(null);
     setLoading(false);
   };
 
-  const handleWhatsApp = () => {
-    if (!user?.phone) return;
+const handleMessageLandlord = async () => {
+  // Get logged in user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    const phone = user.phone.replace(/\D/g, ""); // clean number
+  if (!user) {
+    navigate("/login");
+    return;
+  }
 
-    const message = `Hi, I'm interested in your property: ${property?.title}`;
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  // Prevent landlord from messaging themselves
+  if (user.id === property?.user_id) {
+    return;
+  }
 
-    window.open(url, "_blank");
-  };
+  // Check if conversation already exists
+  const { data: existingConversation } = await supabase
+    .from("conversations")
+    .select("id")
+    .eq("property_id", property?.id)
+    .eq("tenant_id", user.id)
+    .eq("landlord_id", property?.user_id)
+    .maybeSingle();
+
+  let conversationId = existingConversation?.id;
+
+  // If no conversation exists, create one
+  if (!conversationId) {
+    const { data: newConversation, error } = await supabase
+      .from("conversations")
+      .insert({
+        property_id: property?.id,
+        tenant_id: user.id,
+        landlord_id: property?.user_id,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.log(error);
+      return;
+    }
+
+    conversationId = newConversation.id;
+  }
+
+  // Navigate to chat room
+  navigate(`/chat/${conversationId}`);
+};
 
 if (loading) return <PropertyDetailsSkeleton />;
  if (!property)
@@ -250,24 +290,24 @@ if (loading) return <PropertyDetailsSkeleton />;
 
       {/* LANDLORD CARD */}
       <div className="mt-8 border rounded-xl p-4 bg-gray-50">
-        <h2 className="font-bold text-lg">Hosted by {landlord?.full_name}</h2>
+        <h2 className="font-bold text-lg">Listed by {landlord?.full_name}</h2>
 
         <p className="text-sm text-gray-600">{landlord?.email}</p>
 
        <div className="flex items-center gap-3 mt-3">
   
   {/* WHATSAPP BUTTON */}
-  <button
-    onClick={handleWhatsApp}
-    className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg transition"
-  >
-    <FaWhatsapp  size={18} />
-    WhatsApp Landlord
-  </button>
+<button
+  onClick={handleMessageLandlord}
+  className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition"
+>
+  <MessageCircle size={18} />
+  Message Landlord
+</button>
 
   {/* CALL BUTTON */}
   <a
-    href={`tel:${user?.phone}`}
+    href={`tel:${landlord?.phone}`}
     className="flex items-center gap-2 bg-black hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition"
   >
     <Phone size={18} />
