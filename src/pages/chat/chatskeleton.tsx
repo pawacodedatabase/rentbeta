@@ -1,6 +1,6 @@
 export default function ChatSkeleton() {
   return (
-    <div className="h-screen flex flex-col bg-[#efeae2] animate-pulse">
+    <div className="h-screen flex flex-col bg-[#efeae2] ">
 
       {/* Header */}
       <div className="bg-purple-600 h-16"></div>
