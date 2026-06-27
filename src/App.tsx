@@ -18,6 +18,9 @@ import ScrollToTop from "./components/scroll";
 import ChatRoom from "./pages/chat/chat";
 import Conversations from "./pages/chat/conversation";
 import ChatFAB from "./pages/chat/chatFab";
+import EditProfile from "./pages/profile/editProfilee";
+import Profile from "./pages/profile/profile";
+import ProfileSettings from "./pages/profile/profileSettings";
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -64,6 +67,9 @@ const App: React.FC = () => {
           <Route path="/property/:id" element={<PropertyDetails />} />
           <Route path="/property" element={<PropertiesPage />} />
 <Route path="/chat/:conversationId" element={<ChatRoom />} />
+<Route path="/profile/edit" element={<EditProfile />} />
+<Route path="/profile" element={<Profile />} />
+<Route path="/settings" element={<ProfileSettings />} />
 <Route path="/chat" element={<Conversations />} />
           <Route
             path="/create-listing"

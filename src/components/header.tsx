@@ -44,7 +44,7 @@ const Header = ({ user, onLogout }: HeaderProps) => {
             
             {/* User Icon */}
               <Link
-    to="/dashboard"
+    to="/profile"
     className="flex text-[10px] items-center gap-2 px-2 py-2 rounded  text-white hover:bg-purple-200 transition font-medium shadow-sm hover:shadow-md"
   >
             <div className="flex items-center gap-2 cursor-pointer">

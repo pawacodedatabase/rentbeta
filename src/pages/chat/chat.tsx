@@ -142,6 +142,8 @@ const sendMessage = async () => {
     read: false,
   };
 
+
+
   // show instantly
   setMessages((prev) => [...prev, tempMessage]);
 
@@ -184,6 +186,18 @@ const sendMessage = async () => {
       last_message_at: new Date().toISOString(),
     })
     .eq("id", conversationId);
+};
+
+
+const getInitials = (name?: string) => {
+  if (!name) return "?";
+
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .substring(0, 2)
+    .toUpperCase();
 };
 
 
@@ -306,60 +320,64 @@ useEffect(() => {
 
       {/* MESSAGES */}
 
-      <div className="flex-1 overflow-y-auto px-4 py-5 space-y-3">
+   <div className="flex-1 overflow-y-auto px-4 py-5 space-y-4">
+  {messages.map((msg) => {
+    const mine = msg.sender_id === currentUser.id;
 
-        {messages.map((msg) => {
+    const initials = mine
+      ? getInitials(currentUser?.user_metadata?.full_name || "Me")
+      : getInitials(receiver?.full_name);
 
-          const mine = msg.sender_id === currentUser.id;
+    return (
+      <div
+        key={msg.id}
+        className={`flex items-end gap-2 ${
+          mine ? "justify-end" : "justify-start"
+        }`}
+      >
+        {/* Receiver Avatar */}
+        {!mine && (
+          <div className="w-9 h-9 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+            {initials}
+          </div>
+        )}
 
-          return (
+        {/* Bubble */}
+        <div
+          className={`max-w-[70%] rounded-2xl px-4 py-2 shadow ${
+            mine
+              ? "bg-gray-300 text-gray-700"
+              : "bg-white text-gray-800"
+          }`}
+        >
+          <p>{msg.message}</p>
 
-            <div
-              key={msg.id}
-              className={`flex ${
-                mine ? "justify-end" : "justify-start"
-              }`}
-            >
+          <div className="flex justify-end items-center gap-1 mt-1 text-[10px] opacity-70">
+            <span>
+              {new Date(msg.created_at).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
 
-              <div
-                className={`max-w-[70%] rounded-2xl px-4 py-2 shadow
+            {mine && (
+              <span>{msg.read ? "✓✓" : "✓"}</span>
+            )}
+          </div>
+        </div>
 
-                ${
-                  mine
-                    ? "bg-gray-300 text-gray-700"
-                    : "bg-white text-gray-800"
-                }
-                `}
-              >
-
-                <p>{msg.message}</p>
-
-             <div className="flex justify-end items-center gap-1 mt-1 text-[10px] opacity-70">
-  <span>
-    {new Date(msg.created_at).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    })}
-  </span>
-
-  {msg.sender_id === currentUser.id && (
-    <span>
-      {msg.read ? "read" : "delivered"}
-    </span>
-  )}
-</div>
-
-              </div>
-
-            </div>
-
-          );
-
-        })}
-
-        <div ref={bottomRef} />
-
+        {/* Current User Avatar */}
+        {mine && (
+          <div className="w-9 h-9 rounded-full bg-gray-700 text-white flex items-center justify-center text-xs font-bold shrink-0">
+            {initials}
+          </div>
+        )}
       </div>
+    );
+  })}
+
+  <div ref={bottomRef} />
+</div>
 
       {/* INPUT */}
 
