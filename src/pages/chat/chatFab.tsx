@@ -9,9 +9,7 @@ export default function ChatFAB() {
   const [user, setUser] = useState<any>(null);
   const [unread, setUnread] = useState(0);
 
-  useEffect(() => {
-    getUser();
-  }, []);
+ 
 
   useEffect(() => {
   let cleanup: (() => void) | undefined;
@@ -53,19 +51,7 @@ export default function ChatFAB() {
 
 
 
-  async function getUser() {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
 
-    if (!user) return;
-
-    setUser(user);
-
-    loadUnread(user.id);
-
-    subscribe(user.id);
-  }
 
  async function loadUnread(userId: string) {
   const { data: conversations } = await supabase

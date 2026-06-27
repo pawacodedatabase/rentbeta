@@ -21,6 +21,7 @@ import ChatFAB from "./pages/chat/chatFab";
 import EditProfile from "./pages/profile/editProfilee";
 import Profile from "./pages/profile/profile";
 import ProfileSettings from "./pages/profile/profileSettings";
+import PublicProfile from "./pages/profile/publicProfile";
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -71,6 +72,7 @@ const App: React.FC = () => {
 <Route path="/profile" element={<Profile />} />
 <Route path="/settings" element={<ProfileSettings />} />
 <Route path="/chat" element={<Conversations />} />
+<Route path="/user/:id" element={<PublicProfile />} />
           <Route
             path="/create-listing"
             element={

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, User } from "lucide-react";
 import { supabase } from "../../superbase";
 import {
   Wifi,
@@ -32,6 +32,7 @@ type Landlord = {
   full_name: string;
   email: string;
   phone: string;
+  id: number;
 };
 
 const amenityIcons: Record<string, JSX.Element> = {
@@ -133,7 +134,7 @@ const [, setUser] = useState<any>(null);
     if (propertyData?.user_id) {
       const { data: userData } = await supabase
         .from("users")
-        .select("full_name, email, phone")
+        .select("full_name, email, phone , id")
         .eq("id", propertyData.user_id)
         .single();
 
@@ -295,33 +296,46 @@ if (loading) return <PropertyDetailsSkeleton />;
       )}
 
       {/* LANDLORD CARD */}
-      <div className="mt-8 border rounded-xl p-4 bg-gray-50">
-        <h2 className="font-bold text-lg">Listed by {landlord?.full_name}</h2>
+     <div className="mt-8 border rounded-xl p-5 bg-gray-50">
+  <h2 className="font-bold text-lg">
+    Listed by {landlord?.full_name}
+  </h2>
 
-        <p className="text-sm text-gray-600">{landlord?.email}</p>
+  <p className="text-sm text-gray-600">
+    {landlord?.email}
+  </p>
 
-       <div className="flex items-center gap-3 mt-3">
-  
-  {/* WHATSAPP BUTTON */}
-<button
-  onClick={handleMessageLandlord}
-  className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition"
->
-  <MessageCircle size={18} />
-  Message Landlord
-</button>
+  <div className="flex flex-wrap items-center gap-3 mt-4">
 
-  {/* CALL BUTTON */}
-  <a
-    href={`tel:${landlord?.phone}`}
-    className="flex items-center gap-2 bg-black hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition"
-  >
-    <Phone size={18} />
-    Call Landlord
-  </a>
+    {/* View Profile */}
+    <button
+      onClick={() => navigate(`/user/${landlord?.id}`)}
+      className="flex items-center gap-2 bg-white border border-gray-300 hover:border-purple-600 hover:text-purple-600 px-4 py-2 rounded-lg transition"
+    >
+      <User size={18} />
+      View Profile
+    </button>
 
+    {/* Message */}
+    <button
+      onClick={handleMessageLandlord}
+      className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition"
+    >
+      <MessageCircle size={18} />
+      Message Landlord
+    </button>
+
+    {/* Call */}
+    <a
+      href={`tel:${landlord?.phone}`}
+      className="flex items-center gap-2 bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg transition"
+    >
+      <Phone size={18} />
+      Call Landlord
+    </a>
+
+  </div>
 </div>
-      </div>
 
       {/* ACTIONS */}
       {/* <div className="mt-6 flex gap-3">
