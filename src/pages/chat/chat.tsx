@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "../../superbase";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Send, User } from "lucide-react";
 import ChatSkeleton from "./chatskeleton";
 import { MapPin, ArrowUpRight } from "lucide-react";
 
@@ -254,23 +254,38 @@ useEffect(() => {
 
       {/* HEADER */}
 
-      <div className="bg-purple-600 text-white px-4 py-3 flex items-center gap-3 shadow">
+     <div className="bg-white text-gray-700 px-4 py-3 flex items-center justify-between shadow">
 
-        <button onClick={() => navigate(-1)}>
-          <ArrowLeft />
-        </button>
+  {/* Left Side */}
+  <div className="flex items-center gap-3">
+    <button
+      onClick={() => navigate(-1)}
+      className="p-2 rounded-full hover:bg-gray-100 transition"
+    >
+      <ArrowLeft size={22} />
+    </button>
 
-        <div>
-          <h2 className="font-semibold">
-            {receiver?.full_name}
-          </h2>
+    <div>
+      <h2 className="font-semibold">
+        {receiver?.full_name}
+      </h2>
 
-          <p className="text-xs opacity-80">
-            Conversation
-          </p>
-        </div>
+      <p className="text-xs text-gray-500">
+        Conversation
+      </p>
+    </div>
+  </div>
 
-      </div>
+  {/* Right Side */}
+  <button
+    onClick={() => navigate(`/user/${receiver?.id}`)}
+    className="flex items-center gap-2 px-3 py-2 rounded-full border border-gray-200 hover:border-purple-600 hover:text-purple-600 transition text-sm font-medium"
+  >
+    <User size={16} />
+    View Profile
+  </button>
+
+</div>
 
       {/* PROPERTY CARD */}
 {/* PROPERTY PREVIEW */}
