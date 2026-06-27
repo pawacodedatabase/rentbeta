@@ -57,7 +57,7 @@ export default function Conversations() {
         // Fetch other user's profile
         const { data: profile } = await supabase
           .from("users")
-          .select("full_name")
+          .select("full_name , avatar_url")
           .eq("id", otherUserId)
           .maybeSingle();
 
@@ -75,6 +75,7 @@ export default function Conversations() {
         chats.push({
           ...convo,
           full_name: profile?.full_name || "Unknown User",
+           avatar_url: profile?.avatar_url || "",
           property_name: convo.properties?.title || "",
           property_image: convo.properties?.images?.[0] || "",
           unread: count || 0,
@@ -123,6 +124,7 @@ export default function Conversations() {
               key={chat.id}
               id={chat.id}
               name={chat.full_name}
+              avatar={chat.avatar_url}
               propertyName={chat.property_name}
             //   propertyImage={chat.property_image}
               lastMessage={chat.last_message || "Start chatting..."}

@@ -1,6 +1,6 @@
 // src/components/Header.tsx
 import { Link } from "react-router-dom";
-import { UserCircle, LogOut, LogIn, UserPlus } from "lucide-react";
+import {  LogOut, LogIn, UserPlus, UserIcon } from "lucide-react";
 import logo from '../assets/icons/logo.png'
 type HeaderProps = {
   user: any; // replace with your user type
@@ -33,33 +33,33 @@ const Header = ({ user, onLogout }: HeaderProps) => {
   {/* SIGN UP */}
   <Link
     to="/signup"
-    className="flex text-[10px] items-center gap-2 px-2 py-2 rounded bg-purple-600 text-white hover:bg-purple-700 transition font-medium shadow-sm hover:shadow-md"
+    className="flex text-[10px] items-center gap-2 px-2 py-2 rounded bg-purple-300 text-gray-800 hover:bg-purple-700 transition font-medium shadow-sm hover:shadow-md"
   >
     <UserPlus size={18} />
-    Sign Up
+    {/* Sign Up */}
   </Link>
 </>
         ) : (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
             
             {/* User Icon */}
               <Link
     to="/profile"
-    className="flex text-[10px] items-center gap-2 px-2 py-2 rounded  text-white hover:bg-purple-200 transition font-medium shadow-sm hover:shadow-md"
+    className="flex text-[10px] items-center px-1 py-1 rounded  text-white hover:bg-purple-200 transition font-medium shadow-sm hover:shadow-md"
   >
             <div className="flex items-center gap-2 cursor-pointer">
-              <UserCircle className="w-7 h-7 text-purple-600" />
+              <UserIcon className="w-4 h-7 text-purple-600" />
               <span className="text-sm text-gray-700">
-                {user?.full_name || "User"}
+                {user?.full_name || ""}
               </span>
             </div></Link>
 
             {/* Logout */}
             <button
               onClick={onLogout}
-              className="flex items-center gap-1 text-sm text-red-500 hover:text-red-600"
+              className="flex items-center gap-1 text-[13px] text-red-500 hover:text-red-600"
             >
-              <LogOut size={16} />
+              <LogOut size={11} />
               Logout
             </button>
           </div>

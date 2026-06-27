@@ -5,9 +5,18 @@ type Props = {
   name?: string;
   propertyName?: string;
   lastMessage?: string;
+  avatar?: string;
   lastTime?: string;
   unread?: number;
 };
+
+const getInitials = (name: string) =>
+  name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .substring(0, 2)
+    .toUpperCase();
 
 export default function ConversationCard({
   id,
@@ -15,6 +24,7 @@ export default function ConversationCard({
   propertyName,
   lastMessage,
   lastTime,
+  avatar,
   unread = 0,
 }: Props) {
   const navigate = useNavigate();
@@ -27,9 +37,25 @@ export default function ConversationCard({
       className="w-full bg-white flex items-center gap-4 p-4 border-b hover:bg-gray-50 transition"
     >
       {/* Avatar */}
-      <div className="w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-lg">
-        {displayName.charAt(0).toUpperCase()}
-      </div>
+      <div className="relative flex-shrink-0">
+  {avatar ? (
+    <img
+      src={avatar}
+      alt={name}
+      className="w-14 h-14 rounded-full object-cover"
+    />
+  ) : (
+    <div className="w-14 h-14 rounded-full bg-purple-600 text-white flex items-center justify-center font-semibold text-lg">
+      {getInitials(displayName)}
+    </div>
+  )}
+
+  {unread > 0 && (
+    <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+      {unread}
+    </div>
+  )}
+</div>
 
       {/* Name + Message */}
      {/* Name + Property */}

@@ -32,6 +32,7 @@ type Conversation = {
 type User = {
   id: string;
   full_name: string;
+  avatar_url: string;
 };
 
 export default function ChatRoom() {
@@ -90,7 +91,7 @@ useEffect(() => {
 
   const { data: otherUser } = await supabase
     .from("users")
-    .select("id, full_name")
+    .select("id, full_name , avatar_url")
     .eq("id", otherUserId)
     .single();
 
@@ -323,10 +324,16 @@ useEffect(() => {
    <div className="flex-1 overflow-y-auto px-4 py-5 space-y-4">
   {messages.map((msg) => {
     const mine = msg.sender_id === currentUser.id;
+ const senderAvatar = currentUser?.user_metadata?.avatar_url;
+  const receiverAvatar = receiver?.avatar_url;
+  
+ const senderInitials = getInitials(
+    currentUser?.user_metadata?.full_name || "Me"
+  );
 
-    const initials = mine
-      ? getInitials(currentUser?.user_metadata?.full_name || "Me")
-      : getInitials(receiver?.full_name);
+  const receiverInitials = getInitials(
+    receiver?.full_name || "User"
+  );
 
     return (
       <div
@@ -336,11 +343,20 @@ useEffect(() => {
         }`}
       >
         {/* Receiver Avatar */}
-        {!mine && (
-          <div className="w-9 h-9 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
-            {initials}
-          </div>
-        )}
+       {/* Receiver Avatar */}
+{!mine && (
+  receiverAvatar ? (
+    <img
+      src={receiverAvatar}
+      alt={receiver?.full_name}
+      className="w-9 h-9 rounded-full object-cover shrink-0"
+    />
+  ) : (
+    <div className="w-9 h-9 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs font-bold shrink-0">
+      {receiverInitials}
+    </div>
+  )
+)}
 
         {/* Bubble */}
         <div
@@ -361,17 +377,26 @@ useEffect(() => {
             </span>
 
             {mine && (
-              <span>{msg.read ? "✓✓" : "✓"}</span>
+              <span>{msg.read ? "Delivered" : "Read"}</span>
             )}
           </div>
         </div>
 
         {/* Current User Avatar */}
-        {mine && (
-          <div className="w-9 h-9 rounded-full bg-gray-700 text-white flex items-center justify-center text-xs font-bold shrink-0">
-            {initials}
-          </div>
-        )}
+       {/* Current User Avatar */}
+{mine && (
+  senderAvatar ? (
+    <img
+      src={senderAvatar}
+      alt="You"
+      className="w-9 h-9 rounded-full object-cover shrink-0"
+    />
+  ) : (
+    <div className="w-9 h-9 rounded-full bg-gray-700 text-white flex items-center justify-center text-xs font-bold shrink-0">
+      {senderInitials}
+    </div>
+  )
+)}
       </div>
     );
   })}
