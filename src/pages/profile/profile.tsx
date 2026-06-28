@@ -18,6 +18,8 @@ import {
   BadgeCheck,
   MessageSquareText,
   ChevronRight,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 
 import ProfileSkeleton from "./profileSkeleton";
@@ -31,6 +33,8 @@ type Profile = {
   role: "landlord" | "tenant";
   created_at: string;
   avatar_url: string;
+  verified : boolean;
+  suspended : boolean;
 };
 
 type Property = {
@@ -290,15 +294,25 @@ export default function Profile() {
         }
       />
 
-      <span
-        className={`text-[10px] font-medium px-2 py-1 rounded-full ${
-          profile.role === "landlord"
-            ? "bg-emerald-50 text-emerald-600"
-            : "bg-orange-50 text-orange-500"
-        }`}
-      >
-        Verified
-      </span>
+    <span
+  className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded-full ${
+    profile.verified
+      ? "bg-emerald-50 text-emerald-600"
+      : "bg-red-50 text-red-600"
+  }`}
+>
+  {profile.verified ? (
+    <>
+      <CheckCircle2 size={12} />
+      Verified
+    </>
+  ) : (
+    <>
+      <XCircle size={12} />
+      Not Verified
+    </>
+  )}
+</span>
     </div>
 
     <h2 className="mt-5 text-lg font-semibold capitalize text-gray-900">

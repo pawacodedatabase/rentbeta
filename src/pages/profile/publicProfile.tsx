@@ -4,8 +4,10 @@ import { supabase } from "../../superbase";
 import bg from "../../assets/elegant-purple-wave-background-design-projects-vector.png";
 import {
   Building2,
-  BadgeCheck,
+  // BadgeCheck,
   CalendarCheck,
+  CheckCircle2,
+  XCircle,
 //   MapPin,
 } from "lucide-react";
 import ApartmentCard from "../profile/apartmentCard";
@@ -17,6 +19,7 @@ type Profile = {
   role: "landlord" | "tenant";
   created_at: string;
   avatar_url: string;
+  verified: boolean;
 };
 
 type Property = {
@@ -138,10 +141,23 @@ export default function PublicProfile() {
 
           <div className="space-y-5">
 
-            <div className="flex items-center gap-3">
-              <BadgeCheck className="text-green-600" />
-              <span>Verified Member</span>
-            </div>
+           <div className="flex items-center gap-3">
+  {profile.verified ? (
+    <>
+      <CheckCircle2 className="text-green-600" size={20} />
+      <span className="text-green-600 font-medium">
+        Verified Member
+      </span>
+    </>
+  ) : (
+    <>
+      <XCircle className="text-red-600" size={20} />
+      <span className="text-red-600 font-medium">
+        Not Verified
+      </span>
+    </>
+  )}
+</div>
 
             <div className="flex items-center gap-3">
               <CalendarCheck className="text-purple-600" />

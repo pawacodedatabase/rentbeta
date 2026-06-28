@@ -22,6 +22,14 @@ import EditProfile from "./pages/profile/editProfilee";
 import Profile from "./pages/profile/profile";
 import ProfileSettings from "./pages/profile/profileSettings";
 import PublicProfile from "./pages/profile/publicProfile";
+import VerifyAccount from "./pages/verification/VerifyAccount";
+import AdminDashboard from "./pages/admin.tsx/adminDashboard";
+import AdminLayout from "./pages/admin.tsx/adminlayout";
+import EditUser from "./pages/admin.tsx/edituser";
+// import UserCard from "./pages/admin.tsx/userCard";
+import UsersPage from "./pages/admin.tsx/userPage";
+import VerificationPage from "./pages/admin.tsx/VerificationPage";
+import VerificationDetails from "./pages/admin.tsx/verificationDetails";
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -72,7 +80,17 @@ const App: React.FC = () => {
 <Route path="/profile" element={<Profile />} />
 <Route path="/settings" element={<ProfileSettings />} />
 <Route path="/chat" element={<Conversations />} />
+<Route path="/verify" element={<VerifyAccount />} />
+
 <Route path="/user/:id" element={<PublicProfile />} />
+
+<Route path="/admin" element={<AdminLayout />} />
+<Route path="/admin/users" element={<UsersPage />} />
+<Route path="/admin/users/edit/:id" element={<EditUser />} />
+<Route path="/admin/dashboard" element={<AdminDashboard />} />
+<Route path="/admin/verification" element={<VerificationPage />} />
+<Route path="/admin/verification/details" element={<VerificationDetails />} />
+<Route path="/users:id" element={<EditUser />} />
           <Route
             path="/create-listing"
             element={
