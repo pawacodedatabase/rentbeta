@@ -112,7 +112,7 @@ export default function VerificationPage() {
 
       {/* TABLE */}
 
-      <div className="bg-white rounded-2xl shadow overflow-hidden">
+      <div className="bg-white rounded-2xl shadow overflow-x-auto">
 
         <table className="w-full">
 
