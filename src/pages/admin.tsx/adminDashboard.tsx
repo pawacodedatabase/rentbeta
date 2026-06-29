@@ -8,6 +8,7 @@ import {
 
 import { supabase } from "../../superbase";
 import StatCard from "./statCard";
+import AdminBottomNav from "./bottomNav";
 
 type Stats = {
   users: number;
@@ -268,6 +269,7 @@ export default function AdminDashboard() {
         </div>
 
       </div> */}
+      < AdminBottomNav/>
 
     </div>
   );

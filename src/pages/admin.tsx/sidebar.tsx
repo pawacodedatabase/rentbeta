@@ -7,7 +7,7 @@ import {
   X,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import { supabase } from "../../superbase";
+// import { supabase } from "../../superbase";
 
 const links = [
   {
@@ -44,7 +44,10 @@ type Props = {
 
 export default function AdminSidebar({ open, setOpen }: Props) {
   async function logout() {
-    await supabase.auth.signOut();
+    // await supabase.auth.signOut();
+    localStorage.removeItem("admin-auth");
+  window.location.href = "#/admin";
+
   }
 
   return (
@@ -114,7 +117,7 @@ export default function AdminSidebar({ open, setOpen }: Props) {
         <div className="p-5">
           <button
             onClick={logout}
-            className="w-full flex items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white rounded-xl py-3"
+            className="w-full flex  mb-[100px] items-center justify-center gap-2 bg-red-500 hover:bg-red-600 text-white rounded-xl py-3"
           >
             <LogOut size={18} />
             Logout

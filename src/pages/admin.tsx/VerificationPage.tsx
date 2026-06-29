@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { supabase } from "../../superbase";
 import VerificationCard from "./VerificationCard";
+import AdminBottomNav from "./bottomNav";
 
 type Verification = {
   id: string;
@@ -181,6 +182,7 @@ export default function VerificationPage() {
         </table>
 
       </div>
+      < AdminBottomNav/>
 
     </div>
   );

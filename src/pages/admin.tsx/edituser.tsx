@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { supabase } from "../../superbase";
+import AdminBottomNav from "./bottomNav";
 
 type User = {
   id: string;
@@ -300,6 +301,8 @@ export default function EditUser() {
         </div>
 
       </div>
+
+      < AdminBottomNav/>
 
     </div>
   );

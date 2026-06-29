@@ -326,6 +326,15 @@ export default function Profile() {
 
 </div>
 
+ {!profile.verified && (
+  <button
+    onClick={() => navigate("/verify")}
+    className="px-4 py-2 bg-black mt-8 text-sm hover:bg-purple-700 text-white rounded-lg font-medium transition"
+  >
+    Verify Account
+  </button>
+)}
+
       {/* PROFILE DETAILS */}
 
       <div className="bg-white rounded-2xl shadow mt-8 p-5">
@@ -450,6 +459,7 @@ export default function Profile() {
             </div>
 
           </div>
+       
 
         </div>
 

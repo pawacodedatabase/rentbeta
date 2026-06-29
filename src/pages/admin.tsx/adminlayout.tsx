@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import AdminSidebar from "./sidebar";
 import AdminNavbar from "./adminnavbar";
+import AdminBottomNav from "./bottomNav";
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -24,6 +25,9 @@ export default function AdminLayout() {
         <main className="flex-1 p-4 md:p-6 overflow-auto">
           <Outlet />
         </main>
+
+              < AdminBottomNav/>
+        
       </div>
     </div>
   );

@@ -76,7 +76,7 @@ export default function UserCard({
   }
 
   return (
-    <tr className="border-b hover:bg-gray-50 transition">
+    <tr className="border-b hover:bg-gray-50 transition overflow-x-auto">
 
       {/* User */}
 

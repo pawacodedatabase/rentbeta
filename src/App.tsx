@@ -30,6 +30,8 @@ import EditUser from "./pages/admin.tsx/edituser";
 import UsersPage from "./pages/admin.tsx/userPage";
 import VerificationPage from "./pages/admin.tsx/VerificationPage";
 import VerificationDetails from "./pages/admin.tsx/verificationDetails";
+import AdminLogin from "./pages/admin.tsx/adminLogin";
+import ProtectedAdmin from "./pages/admin.tsx/protectroutes";
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
@@ -84,13 +86,22 @@ const App: React.FC = () => {
 
 <Route path="/user/:id" element={<PublicProfile />} />
 
-<Route path="/admin" element={<AdminLayout />} />
-<Route path="/admin/users" element={<UsersPage />} />
-<Route path="/admin/users/edit/:id" element={<EditUser />} />
-<Route path="/admin/dashboard" element={<AdminDashboard />} />
-<Route path="/admin/verification" element={<VerificationPage />} />
-<Route path="/admin/verification/details" element={<VerificationDetails />} />
-<Route path="/users:id" element={<EditUser />} />
+<Route path="/admin-login" element={<AdminLogin />} />
+
+<Route element={<ProtectedAdmin />}>
+  <Route path="/admin" element={<AdminLayout />} />
+  <Route path="/admin/dashboard" element={<AdminDashboard />} />
+  <Route path="/admin/users" element={<UsersPage />} />
+  <Route path="/admin/users/edit/:id" element={<EditUser />} />
+  <Route
+    path="/admin/verification"
+    element={<VerificationPage />}
+  />
+  <Route
+    path="/admin/verification/:id"
+    element={<VerificationDetails />}
+  />
+</Route>
           <Route
             path="/create-listing"
             element={

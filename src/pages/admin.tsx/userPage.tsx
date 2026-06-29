@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { supabase } from "../../superbase";
 import UserCard from "./userCard";
+import AdminBottomNav from "./bottomNav";
 
 
 type User = {
@@ -107,7 +108,9 @@ export default function UsersPage() {
 
       {/* Table */}
 
-      <div className="bg-white rounded-2xl shadow overflow-hidden">
+
+
+      <div className="bg-white rounded-2xl shadow overflow-x-auto">
 
         <table className="w-full">
 
@@ -210,7 +213,7 @@ export default function UsersPage() {
         </div>
 
       )}
-
+<AdminBottomNav/>
     </div>
   );
 }
