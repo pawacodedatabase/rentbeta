@@ -29,31 +29,32 @@ export default function VerificationPage() {
     loadVerification();
   }, []);
 
-  async function loadVerification() {
-    setLoading(true);
+ async function loadVerification() {
+  setLoading(true);
 
-    const { data, error } = await supabase
-      .from("verification")
-      .select(
-        `
-        *,
-        users(
-            full_name,
-            email,
-            avatar_url
-        )
-    `
+  const { data, error } = await supabase
+    .from("verifications")
+    .select(`
+      *,
+      users (
+        full_name,
+        email,
+        avatar_url
       )
-      .order("created_at", {
-        ascending: false,
-      });
+    `)
+    .order("created_at", { ascending: false });
 
-    if (!error && data) {
-      setVerifications(data as any);
-    }
+  console.log("Data:", data);
+  console.log("Error:", error);
 
-    setLoading(false);
+  if (error) {
+    console.error(error);
+  } else {
+    setVerifications(data as Verification[]);
   }
+
+  setLoading(false);
+}
 
   const filtered = useMemo(() => {
     return verifications.filter((v) => {
