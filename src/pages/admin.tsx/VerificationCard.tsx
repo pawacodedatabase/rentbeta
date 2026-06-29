@@ -1,5 +1,5 @@
 import { Eye, CheckCircle, XCircle, Trash2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { supabase } from "../../superbase";
 
 type Props = {
@@ -20,12 +20,12 @@ export default function VerificationCard({
   verification,
   reload,
 }: Props) {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   async function approve() {
     // Update verification status
     await supabase
-      .from("verification")
+      .from("verifications")
       .update({
         status: "approved",
       })
@@ -44,7 +44,7 @@ export default function VerificationCard({
 
   async function reject() {
     await supabase
-      .from("verification")
+      .from("verifications")
       .update({
         status: "rejected",
       })
@@ -69,7 +69,7 @@ export default function VerificationCard({
       return;
 
     await supabase
-      .from("verification")
+      .from("verifications")
       .delete()
       .eq("id", verification.id);
 
@@ -151,19 +151,12 @@ export default function VerificationCard({
 
           {/* VIEW */}
 
-          <button
-            onClick={() =>
-              navigate(
-                `/admin/verification/${verification.id}`
-              )
-            }
-            className="p-2 rounded-lg bg-blue-100 hover:bg-blue-200"
-          >
-            <Eye
-              size={18}
-              className="text-blue-600"
-            />
-          </button>
+       <Link
+  to={`/admin/verification/${verification.id}`}
+  className="p-2 rounded-lg bg-blue-100 hover:bg-blue-200 flex items-center justify-center"
+>
+  <Eye size={18} />
+</Link>
 
           {/* APPROVE */}
 

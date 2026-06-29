@@ -7,20 +7,10 @@ type Verification = {
   id: string;
   user_id: string;
 
-  full_name: string;
-  email: string;
-  phone: string;
-
-  id_type: string;
-  id_number: string;
-
-  selfie_url: string;
-  id_front_url: string;
-  id_back_url: string;
-  proof_of_address_url: string;
+  id_image: string;
+  selfie_image: string;
 
   status: "pending" | "approved" | "rejected";
-
   created_at: string;
 };
 
@@ -52,7 +42,7 @@ export default function VerificationDetails() {
 
   async function loadVerification() {
     const { data, error } = await supabase
-      .from("verification")
+      .from("verifications")
       .select("*")
       .eq("id", id)
       .single();
@@ -111,7 +101,7 @@ export default function VerificationDetails() {
           ) : (
             <div className="w-24 h-24 rounded-full bg-purple-600 text-white text-3xl font-bold flex items-center justify-center">
               {getInitials(
-                verification.full_name
+                // verification.full_name
               )}
             </div>
           )}
@@ -119,15 +109,15 @@ export default function VerificationDetails() {
           <div>
 
             <h1 className="text-3xl font-bold">
-              {verification.full_name}
+              {/* {verification.full_name} */}
             </h1>
 
             <p className="text-gray-500">
-              {verification.email}
+              {/* {verification.email} */}
             </p>
 
             <p className="text-gray-500">
-              {verification.phone}
+              {/* {verification.phone} */}
             </p>
 
           </div>
@@ -153,7 +143,7 @@ export default function VerificationDetails() {
                 </p>
 
                 <p className="font-medium">
-                  {verification.id_type}
+                  {/* {verification.id_type} */}
                 </p>
 
               </div>
@@ -165,7 +155,7 @@ export default function VerificationDetails() {
                 </p>
 
                 <p className="font-medium">
-                  {verification.id_number}
+                  {/* {verification.id_number} */}
                 </p>
 
               </div>
@@ -225,15 +215,15 @@ export default function VerificationDetails() {
             <div>
 
               <p className="font-semibold mb-2">
-                Selfie
+                ID iMAGE
               </p>
 
               <img
-                src={verification.selfie_url}
+                src={verification.id_image}
                 className="rounded-xl border w-full h-64 object-cover cursor-pointer hover:scale-105 transition"
                 onClick={() =>
                   window.open(
-                    verification.selfie_url,
+                    verification.id_image,
                     "_blank"
                   )
                 }
@@ -244,15 +234,15 @@ export default function VerificationDetails() {
             <div>
 
               <p className="font-semibold mb-2">
-                Front of ID
+              Selfie
               </p>
 
               <img
-                src={verification.id_front_url}
+                src={verification.selfie_image}
                 className="rounded-xl border w-full h-64 object-cover cursor-pointer hover:scale-105 transition"
                 onClick={() =>
                   window.open(
-                    verification.id_front_url,
+                    verification.selfie_image,
                     "_blank"
                   )
                 }
@@ -262,41 +252,9 @@ export default function VerificationDetails() {
 
             <div>
 
-              <p className="font-semibold mb-2">
-                Back of ID
-              </p>
+             
 
-              <img
-                src={verification.id_back_url}
-                className="rounded-xl border w-full h-64 object-cover cursor-pointer hover:scale-105 transition"
-                onClick={() =>
-                  window.open(
-                    verification.id_back_url,
-                    "_blank"
-                  )
-                }
-              />
-
-            </div>
-
-            <div>
-
-              <p className="font-semibold mb-2">
-                Proof of Address
-              </p>
-
-              <img
-                src={
-                  verification.proof_of_address_url
-                }
-                className="rounded-xl border w-full h-64 object-cover cursor-pointer hover:scale-105 transition"
-                onClick={() =>
-                  window.open(
-                    verification.proof_of_address_url,
-                    "_blank"
-                  )
-                }
-              />
+            
 
             </div>
 
